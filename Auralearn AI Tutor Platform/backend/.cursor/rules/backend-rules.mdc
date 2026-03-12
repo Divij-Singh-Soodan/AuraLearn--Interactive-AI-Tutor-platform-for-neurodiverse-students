@@ -1,0 +1,26 @@
+---
+alwaysApply: true
+---
+
+## Backend Architecture and Code Quality Rules
+
+- **Modular design**:
+  - Organize backend code into clear modules such as `api`, `core`, `models`, `services`, and `config`.
+  - Keep request/response models, business logic, and infrastructure (e.g., DB, external APIs) in separate modules.
+  - Avoid putting complex logic directly in route handlers; delegate to service or core layers.
+
+- **Type hints**:
+  - Use complete type hints for all function arguments and return types across the backend.
+  - Prefer `pydantic` models (or FastAPI `BaseModel`) for request and response schemas instead of untyped `dict`.
+  - Enable and respect static analysis where possible; avoid using `Any` unless strictly necessary.
+
+- **Strict error handling**:
+  - Use `HTTPException` for predictable HTTP-layer errors and return meaningful status codes and messages.
+  - Wrap interactions with external services (e.g., Google Generative AI) in dedicated modules with explicit error handling.
+  - Do not leak low-level exceptions directly to clients; log internal details and return user-safe messages.
+  - Prefer explicit `try/except` blocks around IO-bound or failure-prone operations and handle fallbacks where appropriate.
+
+- **Project entrypoint**:
+  - The main ASGI application should be exposed from [`main.py`](mdc:main.py) as `app`.
+  - Uvicorn should run via a `__main__` guard in `main.py` or via a CLI command (e.g. `uvicorn main:app --reload`).
+
